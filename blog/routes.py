@@ -1,19 +1,36 @@
 import os
-# import secrets
-# from PIL import Image
-from flask import render_template, url_for, flash, redirect, request, abort
+from flask import render_template, request, jsonify
 from blog import app, db
-# from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from blog.models import User
-# from flask_login import login_user, current_user, logout_user, login_required
 
+@app.route("/", methods = ['GET'])
+@app.route("/index", methods = ['GET'])
+def index():
+    return jsonify(hello=[i.serialize for i in User.query.all()])
 
-@app.route("/")
-def home():
-    # user = User.query.all()
-    user = User(username='t', email='t')
+@app.route("/user", methods = ['GET'])
+def get():
+    user = db.session.query(User).get(1)
+    return jsonify(hello=user.serialize)
+
+@app.route("/user", methods = ['POST'])
+def post():
+    username = request.form.get('username')
+    email = request.form.get('email')
+
+    user = User(username, email)
+
     db.session.add(user)
     db.session.commit()
 
-    return dump(user)
+    return jsonify(hello='Criado')
+
+@app.route("/user/<user_id>", methods = ['DELETE'])
+def delete(user_id):
+
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify(hello='Exluido!')
 
