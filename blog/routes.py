@@ -6,7 +6,8 @@ from blog.models import User
 @app.route("/", methods = ['GET'])
 @app.route("/index", methods = ['GET'])
 def index():
-    return jsonify(hello=[i.serialize for i in User.query.all()])
+    return jsonify(hello='t')
+    # return jsonify(hello=[i.serialize for i in User.query.all()])
 
 @app.route("/user", methods = ['GET'])
 def get():
