@@ -6,12 +6,11 @@ from blog.models import User
 @app.route("/", methods = ['GET'])
 @app.route("/index", methods = ['GET'])
 def index():
-    return jsonify(hello='t')
-    # return jsonify(hello=[i.serialize for i in User.query.all()])
+    return jsonify(data=[i.serialize for i in User.query.all()])
 
-@app.route("/user", methods = ['GET'])
-def get():
-    user = db.session.query(User).get(1)
+@app.route("/user/<user_id>", methods = ['GET'])
+def get(user_id):
+    user = db.session.query(User).get(user_id)
     return jsonify(hello=user.serialize)
 
 @app.route("/user", methods = ['POST'])
@@ -24,7 +23,18 @@ def post():
     db.session.add(user)
     db.session.commit()
 
-    return jsonify(hello='Criado')
+    return jsonify(hello='Criado!')
+
+@app.route("/user/<user_id>", methods = ['PUT'])
+def update(user_id):
+    user = User.query.get_or_404(user_id)
+
+    user.username = request.form.get('username')
+    user.email = request.form.get('email')
+
+    db.session.commit()
+
+    return jsonify(hello='Atualizado!')
 
 @app.route("/user/<user_id>", methods = ['DELETE'])
 def delete(user_id):
@@ -34,4 +44,3 @@ def delete(user_id):
     db.session.commit()
 
     return jsonify(hello='Exluido!')
-
